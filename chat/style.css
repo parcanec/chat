@@ -69,7 +69,7 @@ body {
   padding: 10px 10px 20px;
   width: fit-content;
   max-width: 80%;
-    min-width:50px;
+  min-width: 50px;
 }
 
 .time {
@@ -177,7 +177,8 @@ body {
   border: 1px solid black;
 }
 
-.modal .card form button, .button{
+.modal .card form button,
+.button {
   margin-top: 5px;
   width: 100%;
   background: #fff;
