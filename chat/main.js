@@ -23,8 +23,19 @@ function webSocket(){
     socket.onmessage = function(event) {
         const dataMessage = JSON.parse(event.data)
         createMessage(dataMessage.user.email === Cookies.get('myEmail'), dataMessage.user.name, dataMessage.text, dataMessage.createdAt)
-    };    
-    console.log(Cookies.get('token'))
+    };
+    const sendMessage = document.querySelector('.bottom')
+    sendMessage.addEventListener('submit', send)
+
+
+    function send(env) {
+        env.preventDefault()
+        const nowTime = new Date()
+        let textMessage = message.value
+        socket.send(JSON.stringify({text: `${textMessage}`}))
+    }
+
+
 }
 
 
@@ -122,17 +133,6 @@ const createMessage = (isOutgingMessage, name, text, time) =>{
     chat.append(newMessage)
     document.querySelector('#enter_message').value = ''
 }
-const sendMessage = document.querySelector('.bottom')
-sendMessage.addEventListener('submit', send)
-
-
-function send(env) {
-    env.preventDefault()
-    const nowTime = new Date()
-    let textMessage = message.value
-    socket.send(JSON.stringify({text: `${textMessage}`}))
-}
-
 
 async function history(){
     const historykUrl = 'https://edu.strada.one/api/messages/'
