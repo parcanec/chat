@@ -1,15 +1,9 @@
 import Cookies from "js-cookie"
-const socket = new WebSocket(`ws://edu.strada.one/websockets?${Cookies.get('token')}`)
-socket.onmessage = function(event) {
-    const dataMessage = JSON.parse(event.data)
-    createMessage(dataMessage.user.email === Cookies.get('myEmail'), dataMessage.user.name, dataMessage.text, dataMessage.createdAt)
-    console.log(event.data)
-};
-
 
 const chat = document.querySelector(".middle");
 chat.scrollTop = chat.scrollHeight;
 const message = document.querySelector('#enter_message')
+
 
 /////////////////////////
 //Авторизация - модалка
@@ -21,6 +15,18 @@ autorizationModalCloseButton.addEventListener('click', () => autorizationModal.c
 const email = document.querySelector('#enter_email')
 const sendCode = document.querySelector('#email')
 sendCode.addEventListener('submit', sendAuth)
+
+
+//СТАРТ ПРИЛОЖЕНИЯ!!!\\
+function webSocket(){
+    const socket = new WebSocket(`wss://edu.strada.one/websockets?${Cookies.get('token')}`)
+    socket.onmessage = function(event) {
+        const dataMessage = JSON.parse(event.data)
+        createMessage(dataMessage.user.email === Cookies.get('myEmail'), dataMessage.user.name, dataMessage.text, dataMessage.createdAt)
+    };    
+    console.log(Cookies.get('token'))
+}
+
 
 /////////////////////////
 //Авторизация - функция
@@ -38,8 +44,11 @@ async function sendAuth(env){
         },
     })
     const data = await response.json();
+    autorizationModal.classList.remove('active')
+    confirmationModal.classList.add('active')
     return data
 }
+
 
 /////////////////////////
 //Подтверждение - модалка
@@ -49,9 +58,10 @@ const confirmationModalCloseButton = document.querySelector("#confirmationModal"
 confirmationButton.addEventListener('click', () => confirmationModal.classList.add('active'))
 confirmationModalCloseButton.addEventListener('click', () => confirmationModal.classList.remove('active'))
 const token = document.querySelector('#enter_confirm')
-const checkToken = document.querySelector('#email_confirm')
+const confirmToken = document.querySelector('#email_confirm')
 //Подтверждение - сохранение токена в куки
-checkToken.addEventListener('submit', () => Cookies.set(`token`, `${token.value}`, { expires: 7 }))
+confirmToken.addEventListener('submit', () => Cookies.set(`token`, `${token.value}`, { expires: 7 }))
+
 
 /////////////////////////
 //Настройки - модалка
@@ -85,6 +95,7 @@ async function changeName(env){
     return data
 }
 
+
 async function checkUser() {
     const checkUrl = 'https://edu.strada.one/api/user/me'
     let response = await fetch(checkUrl, {
@@ -99,7 +110,8 @@ async function checkUser() {
     const data = await response.json();
     return data
 }
-checkUser().then(data => Cookies.set(`myEmail`, `${data.email}`))
+//checkUser().then(data => Cookies.set(`myEmail`, `${data.email}`))
+
 
 const createMessage = (isOutgingMessage, name, text, time) =>{
     const template = document.querySelector(isOutgingMessage ? '#outgoing_message' : '#incoming_message');
@@ -110,9 +122,9 @@ const createMessage = (isOutgingMessage, name, text, time) =>{
     chat.append(newMessage)
     document.querySelector('#enter_message').value = ''
 }
-
 const sendMessage = document.querySelector('.bottom')
 sendMessage.addEventListener('submit', send)
+
 
 function send(env) {
     env.preventDefault()
@@ -120,6 +132,7 @@ function send(env) {
     let textMessage = message.value
     socket.send(JSON.stringify({text: `${textMessage}`}))
 }
+
 
 async function history(){
     const historykUrl = 'https://edu.strada.one/api/messages/'
@@ -135,10 +148,20 @@ async function history(){
     const data = await response.json();
     return data.messages.reverse()
 }
-history().then(data=>render(data))
+//history().then(data=>render(data))
+
 
 function render(messages){
     for (let message of messages) {
         createMessage(message.user.email === Cookies.get('myEmail'), message.user.name, message.text, message.createdAt)
     }
 }
+
+function start() {
+    if (Cookies.get('token')) {
+        webSocket()
+    } else {
+        autorizationModal.classList.add('active')
+    }
+}
+start()
