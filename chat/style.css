@@ -48,6 +48,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid;
   margin: 8px 0;
@@ -72,6 +73,13 @@ body {
   min-width: 50px;
 }
 
+.message{
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .time {
   position: absolute;
   right: 4px;
@@ -188,4 +196,10 @@ body {
   font-size: 16px;
   line-height: 19px;
   font-family: 'Roboto';
+}
+
+.name{
+  text-decoration: underline;
+  color: darkblue;
+  margin-bottom: 5px;
 }
