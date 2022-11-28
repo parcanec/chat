@@ -177,7 +177,9 @@ body {
   border: 1px solid black;
 }
 
-.modal .card form button {
+.modal .card form button, .button{
+  margin-top: 5px;
+  width: 100%;
   background: #fff;
   border: 1px solid black;
   padding: 7px;
