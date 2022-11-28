@@ -56,7 +56,7 @@ function webSocket(){
     checkUser().then(data => Cookies.set(`myEmail`, `${data.email}`))
     history().then(data=>render(data))
     socket.onclose=()=>console.log('закрыто')
-    socket.onopen=()=>console.log('открыто')  
+    socket.onopen=()=>console.log('открыто')
 }
 
 /////////////////////////
@@ -147,6 +147,7 @@ const createMessage = (isOutgingMessage, name, text, time) =>{
     newMessage.querySelector(".message").textContent = text;
     newMessage.querySelector(".time").textContent = new Date(time).toLocaleTimeString();
     chat.append(newMessage)
+    chat.scrollTop = chat.scrollHeight;
 }
 
 async function history(){
