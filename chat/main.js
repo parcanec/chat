@@ -1,9 +1,9 @@
 import Cookies from "js-cookie"
+import {sendAuth,changeName,history,checkUser} from './api'
 
 const chat = document.querySelector(".middle");
 chat.scrollTop = chat.scrollHeight;
 const message = document.querySelector('#enter_message')
-
 
 /////////////////////////
 //Авторизация - модалка
@@ -18,48 +18,22 @@ sendCode.addEventListener('submit', sendAuth)
 
 
 //СТАРТ ПРИЛОЖЕНИЯ!!!\\
-function webSocket(){
-    const socket = new WebSocket(`wss://edu.strada.one/websockets?${Cookies.get('token')}`)
-    socket.onmessage = function(event) {
-        const dataMessage = JSON.parse(event.data)
-        createMessage(dataMessage.user.email === Cookies.get('myEmail'), dataMessage.user.name, dataMessage.text, dataMessage.createdAt)
-    };
-    const sendMessage = document.querySelector('.bottom')
-    sendMessage.addEventListener('submit', send)
+function webSocket() {
+  const socket = new WebSocket(`wss://edu.strada.one/websockets?${Cookies.get('token')}`)
+  socket.onmessage = function (event) {
+    const dataMessage = JSON.parse(event.data)
+    createMessage(dataMessage.user.email === Cookies.get('myEmail'), dataMessage.user.name, dataMessage.text, dataMessage.createdAt)
+  };
+  const sendMessage = document.querySelector('.bottom')
+  sendMessage.addEventListener('submit', send)
 
-
-    function send(env) {
-        env.preventDefault()
-        const nowTime = new Date()
-        let textMessage = message.value
-        socket.send(JSON.stringify({text: `${textMessage}`}))
-    }
-
-
-}
-
-
-/////////////////////////
-//Авторизация - функция
-async function sendAuth(env){
+  function send(env) {
     env.preventDefault()
-    const authUrl = 'https://edu.strada.one/api/user'
-    const emailValue = email.value
-    let response = await fetch(authUrl, {
-        method: 'POST',
-        body: JSON.stringify({email: emailValue}),
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors'
-        },
-    })
-    const data = await response.json();
-    autorizationModal.classList.remove('active')
-    confirmationModal.classList.add('active')
-    return data
+    const nowTime = new Date()
+    let textMessage = message.value
+    socket.send(JSON.stringify({text: `${textMessage}`}))
+  }
 }
-
 
 /////////////////////////
 //Подтверждение - модалка
@@ -71,7 +45,7 @@ confirmationModalCloseButton.addEventListener('click', () => confirmationModal.c
 const token = document.querySelector('#enter_confirm')
 const confirmToken = document.querySelector('#email_confirm')
 //Подтверждение - сохранение токена в куки
-confirmToken.addEventListener('submit', () => Cookies.set(`token`, `${token.value}`, { expires: 7 }))
+confirmToken.addEventListener('submit', () => Cookies.set(`token`, `${token.value}`, {expires: 7}))
 
 
 /////////////////////////
@@ -85,83 +59,32 @@ const userName = document.querySelector('#enter_name')
 const sendName = document.querySelector('#name')
 sendName.addEventListener('submit', changeName)
 
-
-/////////////////////////
-//Настройки - смена имени
-async function changeName(env){
-    env.preventDefault()
-    const authUrl = 'https://edu.strada.one/api/user'
-    const namelValue = userName.value
-    let response = await fetch(authUrl, {
-        method: 'PATCH',
-        body: JSON.stringify({name: namelValue}),
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
-    })
-    const data = await response.json();
-    return data
-}
-
-
-async function checkUser() {
-    const checkUrl = 'https://edu.strada.one/api/user/me'
-    let response = await fetch(checkUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
-    })
-    const data = await response.json();
-    return data
-}
 //checkUser().then(data => Cookies.set(`myEmail`, `${data.email}`))
 
-
-const createMessage = (isOutgingMessage, name, text, time) =>{
-    const template = document.querySelector(isOutgingMessage ? '#outgoing_message' : '#incoming_message');
-    let newMessage = template.content.cloneNode(true);
-    newMessage.querySelector(".name").textContent = name;
-    newMessage.querySelector(".message").textContent = text;
-    newMessage.querySelector(".time").textContent = new Date(time).toLocaleTimeString();
-    chat.append(newMessage)
-    document.querySelector('#enter_message').value = ''
+const createMessage = (isOutgingMessage, name, text, time) => {
+  const template = document.querySelector(isOutgingMessage ? '#outgoing_message' : '#incoming_message');
+  let newMessage = template.content.cloneNode(true);
+  newMessage.querySelector(".name").textContent = name;
+  newMessage.querySelector(".message").textContent = text;
+  newMessage.querySelector(".time").textContent = new Date(time).toLocaleTimeString();
+  chat.append(newMessage)
+  document.querySelector('#enter_message').value = ''
 }
 
-async function history(){
-    const historykUrl = 'https://edu.strada.one/api/messages/'
-    let response = await fetch(historykUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
-    })
-    const data = await response.json();
-    return data.messages.reverse()
-}
 //history().then(data=>render(data))
 
-
-function render(messages){
-    for (let message of messages) {
-        createMessage(message.user.email === Cookies.get('myEmail'), message.user.name, message.text, message.createdAt)
-    }
+function render(messages) {
+  for (let message of messages) {
+    createMessage(message.user.email === Cookies.get('myEmail'), message.user.name, message.text, message.createdAt)
+  }
 }
 
 function start() {
-    if (Cookies.get('token')) {
-        webSocket()
-    } else {
-        autorizationModal.classList.add('active')
-    }
+  if (Cookies.get('token')) {
+    webSocket()
+  } else {
+    autorizationModal.classList.add('active')
+  }
 }
+
 start()
