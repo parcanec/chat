@@ -1,4 +1,5 @@
 import Cookies from "js-cookie"
+import {postAuth, history, updateName, checkUser} from "./network";
 
 const chat = document.querySelector(".middle");
 chat.scrollTop = chat.scrollHeight;
@@ -59,26 +60,7 @@ function webSocket(){
     socket.onopen=()=>console.log('открыто')
 }
 
-/////////////////////////
-//Авторизация - функция
-async function sendAuth(env){
-    env.preventDefault()
-    const authUrl = 'https://edu.strada.one/api/user'
-    const emailValue = email.value
-    let response = await fetch(authUrl, {
-        method: 'POST',
-        body: JSON.stringify({email: emailValue}),
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors'
-        },
-    })
-    const data = await response.json();
-    autorizationModal.classList.remove('active')
-    confirmationModal.classList.add('active')
-    return data
-}
+
 
 /////////////////////////
 //Подтверждение - модалка
@@ -105,39 +87,23 @@ sendName.addEventListener('submit', changeName)
 
 /////////////////////////
 //Настройки - смена имени
-async function changeName(env){
-    env.preventDefault()
-    const authUrl = 'https://edu.strada.one/api/user'
-    const namelValue = userName.value
-    let response = await fetch(authUrl, {
-        method: 'PATCH',
-        body: JSON.stringify({name: namelValue}),
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
-    })
-    const data = await response.json();
-    document.querySelector('#enter_name').value = ''
-    settingsModal.classList.remove('active')
-    return data
-}
 
-async function checkUser() {
-    const checkUrl = 'https://edu.strada.one/api/user/me'
-    let response = await fetch(checkUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
+
+function changeName(env) {
+    env.preventDefault()
+    const namelValue = userName.value
+    document.querySelector('#enter_name').value = ''
+    updateName(namelValue)
+      .then(() => settingsModal.classList.remove('active'))
+
+}
+function sendAuth(env) {
+    env.preventDefault()
+    const emailValue = email.value
+    postAuth(emailValue).then(()=>{
+        autorizationModal.classList.remove('active')
+        confirmationModal.classList.add('active')
     })
-    const data = await response.json();
-    return data
 }
 
 const createMessage = (isOutgingMessage, name, text, time) =>{
@@ -150,20 +116,6 @@ const createMessage = (isOutgingMessage, name, text, time) =>{
     chat.scrollTop = chat.scrollHeight;
 }
 
-async function history(){
-    const historykUrl = 'https://edu.strada.one/api/messages/'
-    let response = await fetch(historykUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept : "application/json",
-            mode : 'no-cors',
-            Authorization : `Bearer ${Cookies.get('token')}`
-        },
-    })
-    const data = await response.json();
-    return data.messages.reverse()
-}
 
 function render(messages){
     for (let message of messages) {
