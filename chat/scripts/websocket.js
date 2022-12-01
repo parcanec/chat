@@ -13,7 +13,7 @@ export function webSocket() {
 
   function send(env) {
     env.preventDefault()
-    let textMessage = message.value
+    let textMessage = document.querySelector('#enter_message').value
     socket.send(JSON.stringify({text: `${textMessage}`}))
     document.querySelector('#enter_message').value = ''
   }
