@@ -7,7 +7,7 @@ const headers = {
   Authorization: `Bearer ${Cookies.get('token')}`
 };
 
-async function history() {
+async function getHistory() {
   const historyUrl = 'https://edu.strada.one/api/messages/'
   let response = await fetch(historyUrl, {
     method: 'GET',
@@ -49,4 +49,4 @@ async function postAuth(email) {
   return data
 }
 
-export {postAuth, updateName, history, checkUser}
+export {postAuth, updateName, getHistory, checkUser}
