@@ -2,16 +2,21 @@
   "name": "chat",
   "version": "1.0.0",
   "description": "strada chat project",
-  "main": "main.js",
   "dependencies": {
     "js-cookie": "^3.0.1"
   },
   "devDependencies": {
-    "parcel": "^2.8.0"
+    "parcel": "^2.8.0",
+    "shx": "^0.3.2"
   },
   "scripts": {
     "dev": "parcel index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild-dev": "shx rm -rf dist/*",
+    "build-dev": "parcel build ./index.html --no-optimize --public-url ./",
+    "prebuild": "shx rm -rf dist/*",
+    "build": "parcel build ./index.html --public-url ./",
+    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose"
   },
   "repository": {
     "type": "git",
