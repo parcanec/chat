@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import {IHistory} from "./network";
 
 export const createMessage = (isOutgingMessage, name, text, time) =>{
   const chat = document.querySelector(".middle");
@@ -12,7 +13,7 @@ export const createMessage = (isOutgingMessage, name, text, time) =>{
 }
 
 
-export function render(messages) {
+export function render(messages:IHistory[]) {
   for (let message of messages) {
     createMessage(message.user.email === Cookies.get('myEmail'), message.user.name, message.text, message.createdAt)
   }
