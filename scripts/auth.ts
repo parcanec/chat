@@ -1,11 +1,11 @@
 import {postAuth} from "./network";
 import Cookies from "js-cookie";
 
-const autorizationModal: HTMLElement | null = document.querySelector("#autorizationModal")
-  const autorizationModalCloseButton: HTMLButtonElement | null | undefined = document.querySelector("#autorizationModal")?.querySelector("#close")
+const autorizationModal = document.querySelector("#autorizationModal")
+const autorizationModalCloseButton = document.querySelector("#autorizationModal")?.querySelector("#close")
 
-const confirmationModal: HTMLElement | null = document.querySelector("#confirmationModal")
-  const confirmationModalCloseButton: HTMLButtonElement | null | undefined = document.querySelector("#confirmationModal")?.querySelector("#close")
+const confirmationModal = document.querySelector("#confirmationModal")
+const confirmationModalCloseButton: HTMLButtonElement = document.querySelector("#confirmationModal")?.querySelector("#close")
 
 confirmationModalCloseButton?.addEventListener('click', () => confirmationModal?.classList.remove('active'))
 autorizationModalCloseButton?.addEventListener('click', () => autorizationModal?.classList.remove('active'))
@@ -22,10 +22,10 @@ export function haveCode() {
   confirmationModal?.classList.add('active')
 }
 
-export function sendAuth (env:any) {
+export function sendAuth(env: Event) {
   env.preventDefault()
-  const email: HTMLInputElement | null = document.querySelector('#enter_email')
-  const emailValue: String | undefined = email?.value
+  const email: HTMLInputElement = document.querySelector('#enter_email')
+  const emailValue = email?.value
   postAuth(emailValue).then(() => {
     autorizationModal?.classList.remove('active')
     confirmationModal?.classList.add('active')

@@ -11,11 +11,11 @@ export function webSocket() {
   const sendMessage = document.querySelector('.bottom')
   sendMessage.addEventListener('submit', send)
 
-  function send(env) {
+  function send(env:Event) {
     env.preventDefault()
-    let textMessage = document.querySelector('#enter_message').value
-    socket.send(JSON.stringify({text: `${textMessage}`}))
-    document.querySelector('#enter_message').value = ''
+    const input:HTMLInputElement = document.querySelector('#enter_message')
+    socket.send(JSON.stringify({text: `${input.value}`}))
+    input.value = ''
   }
 
   checkUser().then(data => Cookies.set(`myEmail`, `${data.email}`))

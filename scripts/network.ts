@@ -7,7 +7,7 @@ const headers = {
   Authorization: `Bearer ${Cookies.get('token')}`
 };
 
-async function getHistory() {
+async function getHistory(){
   const historyUrl = 'https://edu.strada.one/api/messages/'
   let response = await fetch(historyUrl, {
     method: 'GET',

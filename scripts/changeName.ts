@@ -1,11 +1,10 @@
 import {updateName} from "./network";
 
-export function changeName(env) {
-  const userName = document.querySelector('#enter_name')
+export function changeName(env: Event) {
   env.preventDefault()
-  const namelValue = userName.value
-  document.querySelector('#enter_name').value = ''
-  updateName(namelValue)
-    .then(() => settingsModal.classList.remove('active'))
-
+  const userName: HTMLInputElement = document.querySelector('#enter_name')
+  const nameValue = userName.value
+  const settingsModal = document.querySelector('#settingsModal')
+  userName.value = ''
+  updateName(nameValue).then(() => settingsModal.classList.remove('active'))
 }

@@ -2,8 +2,8 @@ import Cookies from "js-cookie";
 
 export const createMessage = (isOutgingMessage, name, text, time) =>{
   const chat = document.querySelector(".middle");
-  const template = document.querySelector(isOutgingMessage ? '#outgoing_message' : '#incoming_message');
-  let newMessage = template.content.cloneNode(true);
+  const template:HTMLTemplateElement = document.querySelector(isOutgingMessage ? '#outgoing_message' : '#incoming_message');
+  let newMessage  = template.content.cloneNode(true) as HTMLElement;
   newMessage.querySelector(".name").textContent = name;
   newMessage.querySelector(".message").textContent = text;
   newMessage.querySelector(".time").textContent = new Date(time).toLocaleTimeString();
