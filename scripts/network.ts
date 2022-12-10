@@ -7,7 +7,18 @@ const headers = {
   Authorization: `Bearer ${Cookies.get('token')}`
 };
 
-async function getHistory(){
+interface IUser  {email: string, name: string}
+interface IHistory{
+  createdAt:string
+  text:string
+  updatedAt:string
+  user:IUser
+  __v:number
+  _id:string
+}
+
+
+const getHistory = async ():Promise<IHistory[]> => {
   const historyUrl = 'https://edu.strada.one/api/messages/'
   let response = await fetch(historyUrl, {
     method: 'GET',
